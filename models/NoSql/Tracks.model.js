@@ -33,7 +33,7 @@ const TracksSchema = new mongoose.Schema(
                 type: Number
             },
             end: {
-                type: number
+                type: Number
             },
         },
         mediaId: {
