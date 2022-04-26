@@ -1,15 +1,16 @@
 const express = require("express")
 const { getItems, getItem, createItem, updateItem, deleteItem } = require("../controllers/Tracks.controller")
-const customHeader = require("../middleware/customHeader")
+const checkRol = require("../middleware/rol")
+const authMiddleware = require("../middleware/session")
 const { validatorCreateItem, validatorGetItem } = require("../validators/tracks.validator")
 const router = express.Router()
 
 // TODO http://localhost/tracks get, post, delete put
 
-router.get("/", getItems)
-router.get("/:id", [validatorGetItem], getItem)
-router.post("/", [validatorCreateItem], createItem)
-router.put("/:id", [validatorGetItem, validatorCreateItem], updateItem)
-router.delete("/:id", [validatorGetItem], deleteItem)
+router.get("/", [authMiddleware, checkRol(["admin", "user"])], getItems)
+router.get("/:id", [validatorGetItem, authMiddleware], getItem)
+router.post("/", [validatorCreateItem, authMiddleware, checkRol(["admin"])], createItem)
+router.put("/:id", [validatorGetItem, validatorCreateItem, authMiddleware], updateItem)
+router.delete("/:id", [validatorGetItem, authMiddleware], deleteItem)
 
 module.exports = router
