@@ -47,6 +47,48 @@ const TracksSchema = new mongoose.Schema(
     }
 )
 
+/**
+ * implementar metodo prtopio con relacion
+ */
+TracksSchema.statics.findAllData = function () {
+    const joinData = this.aggregate([
+        {
+            $lookup: {
+                from: "storages",
+                localField: "mediaId",
+                foreignField: "_id",
+                as: "audio"
+            }
+        },
+        {
+            $unwind: "$audio"
+        }
+    ])
+    return joinData
+}
+
+TracksSchema.statics.findOneData = function (id) {
+    const joinData = this.aggregate([
+        {
+            $lookup: {
+                from: "storages",
+                localField: "mediaId",
+                foreignField: "_id",
+                as: "audio"
+            }
+        },
+        {
+            $unwind: "$audio"
+        },
+        {
+            $match: {
+                _id: mongoose.Types.ObjectId(id)
+            }
+        }
+    ])
+    return joinData
+}
+
 TracksSchema.plugin(mongooseDelete, { overrideMethods: 'all' })
 
 module.exports = mongoose.model("tracks", TracksSchema)

@@ -9,7 +9,7 @@ const router = express.Router()
 
 router.get("/", [authMiddleware, checkRol(["admin", "user"])], getItems)
 router.get("/:id", [validatorGetItem, authMiddleware], getItem)
-router.post("/", [validatorCreateItem, authMiddleware, checkRol(["admin"])], createItem)
+router.post("/", [validatorCreateItem, authMiddleware, checkRol(["admin", "user"])], createItem)
 router.put("/:id", [validatorGetItem, validatorCreateItem, authMiddleware], updateItem)
 router.delete("/:id", [validatorGetItem, authMiddleware], deleteItem)
 
