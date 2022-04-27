@@ -1,7 +1,9 @@
 const UsersModel = require("../models/NoSql/Users.model")
 const { handleHttpError } = require("../utils/handleError")
 const { verifyToken } = require("../utils/handleJwt")
+const getProperties = require("../utils/handlePropertiesEngine")
 
+const propertiesKey = getProperties()
 
 const authMiddleware = async (req, res, next) => {
     try {
@@ -12,12 +14,17 @@ const authMiddleware = async (req, res, next) => {
 
         const token = req.headers.authorization.split(' ').pop()
         const dataToken = await verifyToken(token)
-        if (!dataToken._id) {
-            handleHttpError(res, "TOKEN_NOT_VALID", 401)
+
+        if (!dataToken) {
+            handleHttpError(res, "NOT_PAYLOAD_DATA", 401)
             return
         }
 
-        const user = await UsersModel.findById(dataToken._id)
+        const query = {
+            [propertiesKey.id]: dataToken[propertiesKey.id]
+        }
+        
+        const user = await UsersModel.findOne(query)
 
         req.user = user
 

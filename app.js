@@ -4,7 +4,10 @@ const cors = require("cors")
 const dbConnect = require("./config/mongo")
 const morganBody = require("morgan-body")
 const { loggerStream } = require("./utils/handleLogger")
+const { dbConnectMySql } = require("./config/mysql")
 const app = express()
+
+const ENGINE_DB = process.env.ENGINE_DB
 
 app.use(cors())
 app.use(express.json())
@@ -30,4 +33,8 @@ app.listen(port, () => {
     console.log('Tu app esta lista por http://localhost:' + port)
 })
 
-dbConnect()
+if (ENGINE_DB === "nosql") {
+    dbConnect()
+} else {
+    dbConnectMySql()
+} 
